@@ -2,12 +2,9 @@
   "name": "nodejs",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch server/index.ts",
-    "build:client": "cd client && pnpm build",
-    "build:server": "tsc",
-    "build": "pnpm run build:client && pnpm run build:server",
-    "start": "node dist/index.js",
-    "postinstall": "cd client && pnpm install"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.19.0",
