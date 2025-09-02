@@ -1,5 +1,4 @@
 import { getGenre } from "@/libs/api";
-import { Genre } from "@server/db/schema/genreSchema";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/$id/")({
@@ -8,7 +7,7 @@ export const Route = createFileRoute("/$id/")({
 });
 
 function RouteComponent() {
-  const { genre } = Route.useLoaderData() as { genre: Genre };
+  const { genre } = Route.useLoaderData();
 
   return (
     <div>

@@ -23,7 +23,7 @@ const genresRoute = new Hono()
     });
 
     if (!foundGenre) {
-      return c.notFound();
+      return c.json({ error: "Genre not found" }, 404);
     }
 
     return c.json({ genre: foundGenre });
@@ -46,7 +46,7 @@ const genresRoute = new Hono()
       .then((res) => res[0]);
 
     if (!deletedGenre) {
-      return c.notFound();
+      return c.json({ error: "Genre not found" }, 404);
     }
 
     return c.text("Deleted successfully");
@@ -64,7 +64,7 @@ const genresRoute = new Hono()
       .then((res) => res[0]);
 
     if (!updatedGenre) {
-      return c.notFound();
+      return c.json({ error: "Genre not found" }, 404);
     }
 
     return c.json({ genre: updatedGenre });
