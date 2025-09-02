@@ -9,6 +9,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { genres } = Route.useLoaderData();
 
+  console.log("fake Change");
+
   return (
     <ul>
       {genres.map((g) => (
