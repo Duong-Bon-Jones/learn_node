@@ -2,7 +2,7 @@
   "name": "nodejs",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch server/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
