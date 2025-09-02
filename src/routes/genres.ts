@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
-import { genreInsertSchema, type Genre } from "../db/schema/genreSchema.js";
+import { genreInsertSchema } from "../db/schema/genreSchema.js";
 import { db } from "../db/index.js";
 import { genres as genresTable } from "../db/schema/genreSchema.js";
 import { eq } from "drizzle-orm";
@@ -23,7 +23,7 @@ const genresRoute = new Hono()
     });
 
     if (!foundGenre) {
-      return c.json({ error: "Genre not found" }, 404);
+      return c.notFound();
     }
 
     return c.json({ genre: foundGenre });
@@ -46,7 +46,7 @@ const genresRoute = new Hono()
       .then((res) => res[0]);
 
     if (!deletedGenre) {
-      return c.json({ error: "Genre not found" }, 404);
+      return c.notFound();
     }
 
     return c.text("Deleted successfully");
@@ -64,7 +64,7 @@ const genresRoute = new Hono()
       .then((res) => res[0]);
 
     if (!updatedGenre) {
-      return c.json({ error: "Genre not found" }, 404);
+      return c.notFound();
     }
 
     return c.json({ genre: updatedGenre });

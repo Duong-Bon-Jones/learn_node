@@ -1,5 +1,5 @@
 import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type z from "zod";
 
 export const users = pgTable(
@@ -8,6 +8,7 @@ export const users = pgTable(
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
+    password: text("password").notNull(),
     created_at: timestamp("created_at").notNull().defaultNow(),
     updated_at: timestamp("updated_at")
       .notNull()
@@ -16,10 +17,16 @@ export const users = pgTable(
   (table) => [index("email").on(table.email)]
 );
 
-export type User = typeof users.$inferSelect;
+const userSelectSchema = createSelectSchema(users).omit({ password: true });
+
+export type User = z.infer<typeof userSelectSchema>;
 
 export const userInsertSchema = createInsertSchema(users, {
-  name: (schema) => schema.max(200).min(3),
+  name: (schema) => schema.max(255).min(3),
+  email: (schema) => schema.max(255),
+  password: (schema) => schema.max(255).min(5),
 }).omit({ id: true, created_at: true, updated_at: true });
+
+export const userAuthSchema = userInsertSchema.omit({ name: true });
 
 export type CreateUser = z.infer<typeof userInsertSchema>;
