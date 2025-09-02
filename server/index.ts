@@ -4,7 +4,9 @@ import genresRoute from "./routes/genres.js";
 
 const app = new Hono();
 
-app.basePath("/api").route("/genres", genresRoute);
+const appRoutes = app.basePath("/api").route("/genres", genresRoute);
+
+export type AppType = typeof appRoutes;
 
 serve(
   {
