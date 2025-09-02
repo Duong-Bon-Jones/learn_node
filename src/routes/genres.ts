@@ -19,7 +19,7 @@ const genresRoute = new Hono()
     const id = c.req.param("id");
 
     const foundGenre = await db.query.genres.findFirst({
-      where: (genres, { eq }) => eq(genres.id, Number(id)),
+      where: eq(genresTable.id, Number(id)),
     });
 
     if (!foundGenre) {
