@@ -1,6 +1,16 @@
-import { index, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgEnum,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import type z from "zod";
+
+export const roleEnum = pgEnum("role", ["admin"]);
 
 export const users = pgTable(
   "users",
@@ -13,6 +23,7 @@ export const users = pgTable(
     updated_at: timestamp("updated_at")
       .notNull()
       .$onUpdate(() => new Date()),
+    role: roleEnum(),
   },
   (table) => [index("email").on(table.email)]
 );

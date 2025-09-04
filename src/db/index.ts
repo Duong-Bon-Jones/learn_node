@@ -6,7 +6,12 @@ import * as userSchema from "./schema/userSchema.js";
 import { config } from "dotenv";
 config({ path: ".env" });
 
-const sql = neon(process.env.DATABASE_URL!);
+if (!process.env.DATABASE_URL) {
+  console.error("FATAL ERROR: DATABASE_URL is not defined");
+  process.exit(1);
+}
+
+const sql = neon(process.env.DATABASE_URL);
 
 export const db = drizzle({
   client: sql,

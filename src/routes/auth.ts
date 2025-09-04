@@ -5,6 +5,7 @@ import { db } from "../db/index.js";
 import { users as usersTable } from "../db/schema/userSchema.js";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
+import { createJWT } from "../utils.js";
 
 const authRoute = new Hono().post(
   "/",
@@ -29,7 +30,15 @@ const authRoute = new Hono().post(
       return c.json({ message: "Error: Wrong email/password" }, 401);
     }
 
-    return c.json({ message: "Authenticated successfully" });
+    const accessToken = await createJWT({
+      id: existingUser.id,
+      role: existingUser.role,
+    });
+
+    return c.json({
+      message: "Authenticated successfully",
+      accessToken,
+    });
   }
 );
 

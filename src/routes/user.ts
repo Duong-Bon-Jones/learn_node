@@ -4,13 +4,14 @@ import { userInsertSchema } from "../db/schema/userSchema.js";
 import { db } from "../db/index.js";
 import { users as usersTable } from "../db/schema/userSchema.js";
 import { eq } from "drizzle-orm";
-import { pick } from "lodash-es";
+import { omit, pick } from "lodash-es";
 import bcrypt from "bcrypt";
+import { createJWT, type AppJWTPayload } from "../utils.js";
+import { authMiddleware } from "../middlewares.js";
+import type { JwtVariables } from "hono/jwt";
 
-const usersRoute = new Hono().post(
-  "/",
-  zValidator("json", userInsertSchema),
-  async (c) => {
+const usersRoute = new Hono<{ Variables: JwtVariables<AppJWTPayload> }>()
+  .post("/", zValidator("json", userInsertSchema), async (c) => {
     const validated = c.req.valid("json");
 
     const existingUser = await db.query.users.findFirst({
@@ -31,8 +32,24 @@ const usersRoute = new Hono().post(
       .then((res) => res[0]);
     c.status(201);
 
+    const accessToken = await createJWT({ id: result.id, role: result.role });
+    c.header("X-Access-Token", accessToken);
+
     return c.json({ user: pick(result, ["id", "name", "email"]) });
-  }
-);
+  })
+  .use(authMiddleware)
+  .get("/me", async (c) => {
+    const { id } = c.get("jwtPayload");
+
+    const existingUser = await db.query.users.findFirst({
+      where: eq(usersTable.id, id),
+    });
+
+    if (!existingUser) {
+      return c.notFound();
+    }
+
+    return c.json({ user: omit(existingUser, "password") });
+  });
 
 export default usersRoute;
