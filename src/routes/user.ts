@@ -6,11 +6,11 @@ import { users as usersTable } from "../db/schema/userSchema.js";
 import { eq } from "drizzle-orm";
 import { omit, pick } from "lodash-es";
 import bcrypt from "bcrypt";
-import { createJWT, type AppJWTPayload } from "../utils.js";
+import { createJWT } from "../utils.js";
 import { authMiddleware } from "../middlewares.js";
-import type { JwtVariables } from "hono/jwt";
+import type { GlobalHono } from "../types.js";
 
-const usersRoute = new Hono<{ Variables: JwtVariables<AppJWTPayload> }>()
+const usersRoute = new Hono<GlobalHono>()
   .post("/", zValidator("json", userInsertSchema), async (c) => {
     const validated = c.req.valid("json");
 
