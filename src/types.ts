@@ -1,9 +1,6 @@
 import type { JWTPayload } from "hono/utils/jwt/types";
-import type { appRoutes } from "./index.js";
 import type { User } from "./db/schema/userSchema.js";
 import type { JwtVariables } from "hono/jwt";
-
-export type AppType = typeof appRoutes;
 
 export type AppEnv = {
   DATABASE_URL: string;

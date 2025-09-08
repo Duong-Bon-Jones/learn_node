@@ -12,7 +12,11 @@ export const captureErrorWithPostHog = (
   err: Error | HTTPResponseError,
   c?: Context<GlobalHono, any, {}>
 ) => {
-  const posthog = new PostHog(process.env.POSTHOG_PUBLIC_KEY!, {
+  if (!process.env.POSTHOG_PUBLIC_KEY) {
+    return;
+  }
+
+  const posthog = new PostHog(process.env.POSTHOG_PUBLIC_KEY, {
     host: "https://us.i.posthog.com",
   });
 

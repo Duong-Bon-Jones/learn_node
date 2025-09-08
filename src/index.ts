@@ -8,7 +8,7 @@ import { captureErrorWithPostHog } from "./utils.js";
 import type { GlobalHono } from "./types.js";
 
 // Init app
-const app = new Hono<GlobalHono>().use(logger()).onError((err, c) => {
+const app = new Hono<GlobalHono>().onError((err, c) => {
   captureErrorWithPostHog(err, c);
 
   return c.text("Internal server error", 500);
@@ -27,8 +27,9 @@ process.on("unhandledRejection", (reason) => {
 });
 
 // Routes
-export const appRoutes = app
+app
   .basePath("/api")
+  .use(logger())
   .route("/genres", genresRoute)
   .route("/users", usersRoute)
   .route("/auth", authRoute);
