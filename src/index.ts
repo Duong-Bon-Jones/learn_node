@@ -4,10 +4,26 @@ import genresRoute from "./routes/genres.js";
 import usersRoute from "./routes/user.js";
 import authRoute from "./routes/auth.js";
 import { logger } from "hono/logger";
-import { onAppError } from "./utils.js";
+import { captureErrorWithPostHog } from "./utils.js";
 import type { GlobalHono } from "./types.js";
 
-const app = new Hono<GlobalHono>().use(logger()).onError(onAppError);
+const app = new Hono<GlobalHono>().use(logger()).onError((err, c) => {
+  captureErrorWithPostHog(err, c);
+
+  return c.text("Internal server error", 500);
+});
+
+process.on("uncaughtException", (err) => {
+  captureErrorWithPostHog(err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  captureErrorWithPostHog(
+    new Error("We got unhandled rejection", { cause: reason })
+  );
+  process.exit(1);
+});
 
 export const appRoutes = app
   .basePath("/api")

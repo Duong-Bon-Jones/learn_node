@@ -7,7 +7,6 @@ import { eq } from "drizzle-orm";
 import { adminMiddleware, authMiddleware } from "../middlewares.js";
 
 const genresRoute = new Hono()
-  .use(authMiddleware)
   .get("/", async (c) => {
     const result = await db.query.genres.findMany({
       orderBy: (genres, { desc }) => [desc(genres.created_at)],
@@ -30,6 +29,7 @@ const genresRoute = new Hono()
 
     return c.json({ genre: foundGenre });
   })
+  .use(authMiddleware)
   .post("/", zValidator("json", genreInsertSchema), async (c) => {
     const validated = c.req.valid("json");
 
